@@ -16,4 +16,7 @@ Features include:
  - Local caching
  - Tools used: Retrofit, Kotlin coroutines, Flow, Live data, Hilt (dependency injection), Glide, Room Database, Jetpack Compose components
 
+
+App Screen Recording: <a href="https://drive.google.com/file/d/1PMQkwSaLe4bss_94CX1pw3NwxmwE4yMI/view?usp=sharing">Video link</a>
+
 Check the app: <a href="https://drive.google.com/file/d/1b_1B3L1nu19xc9H8nWXD3sWeD_H3Geel/view?usp=sharing">Application download link</a>.

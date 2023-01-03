@@ -15,9 +15,11 @@ interface MovieApiService {
         searchQuery: String,
         @Query("page")
         page: Int,
+        @Query("type")
+        type: String,
         @Query("apikey")
         apiKey: String = BuildConfig.MOVIE_API_KEY
-    ): Response<Movie>
+    ): Movie
 
     @GET(".")
     suspend fun getMovieDetails(

@@ -1,11 +1,12 @@
 package com.smish.abda.domain.usecase
 
-import com.smish.abda.data.model.movie.Movie
+import androidx.paging.PagingData
+import com.smish.abda.data.model.movie.Search
 import com.smish.abda.domain.repository.MovieRepository
-import com.smish.abda.util.Resource
+import kotlinx.coroutines.flow.Flow
 
 class GetMovies(private val movieRepository: MovieRepository) {
-    suspend fun getMovies(searchQuery: String, page: Int): Resource<Movie> {
-        return movieRepository.getMovies(searchQuery, page)
+    fun getMovies(searchQuery: String, type: String, page: Int): Flow<PagingData<Search>> {
+        return movieRepository.getMovies(searchQuery, type, page)
     }
 }

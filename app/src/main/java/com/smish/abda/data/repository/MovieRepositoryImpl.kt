@@ -14,8 +14,8 @@ class MovieRepositoryImpl(
     private val movieLocalDataSource: MovieLocalDataSource
 ): MovieRepository {
 
-    override fun getMovies(searchQuery: String, page: Int): Flow<PagingData<Search>> {
-        return movieRemoteDataSource.getMovies(searchQuery, page)
+    override fun getMovies(searchQuery: String, type: String, page: Int): Flow<PagingData<Search>> {
+        return movieRemoteDataSource.getMovies(searchQuery, type, page)
         /*if (response.isSuccessful) {
             response.body()?.let { res ->
                 if (res.response == "True") {

@@ -4,7 +4,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.smish.abda.data.api.MovieApiService
-import com.smish.abda.data.model.movie.Movie
 import com.smish.abda.data.model.movie.Search
 import com.smish.abda.data.model.moviedetail.MovieDetail
 import com.smish.abda.data.repository.datasource.MoviePagingSource
@@ -16,16 +15,14 @@ class MovieRemoteDataSourceImpl(
     private val movieAPI: MovieApiService
 ): MovieRemoteDataSource {
 
-    override fun getMovies(searchQuery: String, page: Int): Flow<PagingData<Search>> {
-//        return movieAPI.getMovies(searchQuery, page)
-        // have the implementation here for paging data source, return pager here
+    override fun getMovies(searchQuery: String, type: String, page: Int): Flow<PagingData<Search>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                MoviePagingSource(query = searchQuery, movieApiService = movieAPI)
+                MoviePagingSource(query = searchQuery, type = type, movieApiService = movieAPI)
             }
         ).flow
     }

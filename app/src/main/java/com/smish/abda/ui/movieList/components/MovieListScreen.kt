@@ -1,12 +1,8 @@
 package com.smish.abda.ui.movieList.components
 
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +16,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import com.smish.abda.R
 import com.smish.abda.data.model.movie.Type
 import com.smish.abda.data.model.movie.getAllTypes
@@ -42,16 +36,12 @@ import com.smish.abda.data.model.moviedetail.MovieDetail
 import com.smish.abda.ui.viewmodel.MoviesViewmodel
 import kotlinx.coroutines.launch
 
-enum class ExpandedType {
-    HALF, FULL, COLLAPSED
-}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MovieListScreen(
     viewmodel: MoviesViewmodel = hiltViewModel()
 ) {
-    val state = viewmodel.movieState.value
     val movieDetailState = viewmodel.movieDetailState.value
 
     val textState = remember { mutableStateOf(TextFieldValue("")) }
@@ -67,19 +57,6 @@ fun MovieListScreen(
         mutableStateOf(false)
     }
 
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp
-    var expandedType by remember {
-        mutableStateOf(ExpandedType.COLLAPSED)
-    }
-    val height by animateIntAsState(
-        when (expandedType) {
-            ExpandedType.HALF -> screenHeight / 2
-            ExpandedType.FULL -> screenHeight
-            ExpandedType.COLLAPSED -> 0
-        }
-    )
-
     val movieList = viewmodel.getPagingMovies().collectAsLazyPagingItems()
     ModalBottomSheetLayout(
         sheetState = bottomSheetModalState,
@@ -89,7 +66,6 @@ fun MovieListScreen(
                 movie = movieDetailState.movies
                 LaunchedEffect(bottomSheetModalState) {
                     bottomSheetModalState.show()
-//                    bottomSheetScaffoldState.bottomSheetState.expand()
                 }
             }
             Column(
@@ -140,7 +116,7 @@ fun MovieListScreen(
                     selectedType = selectedType.value,
                     onSelectedChanged = {
                         selectedType.value = getType(it)
-                        viewmodel.getSpecificType(it)
+                        viewmodel.setSpecificType(it)
                     }
                 )
 
@@ -158,32 +134,6 @@ fun MovieListScreen(
                             viewmodel.removeMovie(movie)
                     }
                 )
-
-                /*LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(movieList) { movie ->
-                        if (movie != null) {
-                            val (isChecked, setChecked) = remember { mutableStateOf(false) }
-                            MovieListItem(
-                                movie = movie,
-                                onMovieClick = {
-                                    // call the movie detail api and trigger the bottom sheet
-                                    showModalSheet.value = !showModalSheet.value
-                                    viewmodel.getMovieDetails(movie.imdbID)
-                                },
-                                isChecked,
-                                onBookmarkClick = {
-                                    setChecked(!isChecked)
-                                    if (!isChecked)
-                                        viewmodel.bookmarkMovie(movie)
-                                    else
-                                        viewmodel.removeMovie(movie)
-                                }
-                            )
-                        }
-                    }
-                }*/
 
                 /*LazyVerticalGrid(
                     modifier = Modifier.fillMaxSize(),
@@ -213,7 +163,7 @@ fun MovieListScreen(
                 }*/
             }
 
-            if (state.error.isNotBlank()) {
+            /*if (state.error.isNotBlank()) {
                 Text(
                     text = state.error,
                     color = MaterialTheme.colors.error,
@@ -223,12 +173,12 @@ fun MovieListScreen(
                         .padding(horizontal = 20.dp)
                         .align(Alignment.Center)
                 )
-            }
+            }*/
 
 //        Progress Bar
-            if (state.isLoading) {
+            /*if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
+            }*/
         }
     }
 
@@ -325,8 +275,8 @@ fun ChipGroup(
                 Chip(
                     name = it.value,
                     isSelected = selectedType == it,
-                    onSelectionChanged = {
-                        onSelectedChanged(it)
+                    onSelectionChanged = { type ->
+                        onSelectedChanged(type)
                     },
                 )
             }
@@ -363,13 +313,6 @@ fun Chip(
             )
         }
     }
-}
-
-@Preview(showBackground = false)
-@Composable
-fun SearchViewPreview() {
-    val textState = remember { mutableStateOf(TextFieldValue("")) }
-//    SearchView(textState)
 }
 
 @Preview(showBackground = false)

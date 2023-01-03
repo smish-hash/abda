@@ -4,25 +4,24 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.smish.abda.data.model.movie.Movie
 import com.smish.abda.data.model.movie.Search
 import com.smish.abda.data.model.movie.Type
-import com.smish.abda.data.repository.datasource.MoviePagingSource
 import com.smish.abda.domain.usecase.*
 import com.smish.abda.ui.movieList.MovieDetailState
-import com.smish.abda.ui.movieList.MovieListState
 import com.smish.abda.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,69 +36,14 @@ class MoviesViewmodel @Inject constructor(
 
     val movies: MutableLiveData<Resource<Movie>> = MutableLiveData()
 
-    private val _movieState = mutableStateOf(MovieListState())
-    val movieState: State<MovieListState> = _movieState
-
-    private var topMovies: List<Search?>? = emptyList()
-
     private val _movieDetailState = mutableStateOf(MovieDetailState())
     val movieDetailState: State<MovieDetailState> = _movieDetailState
 
-    var query = mutableStateOf("")
-        private set
-
-    private lateinit var pagingSource : MoviePagingSource
-
-    /*init {
-        getPagingMovies("")
-    }*/
-
-    /*fun getMovies(searchQuery: String, page: Int) = viewModelScope.launch { Dispatchers.IO
-//        movies.postValue(Resource.Loading())
-        _movieState.value = MovieListState(isLoading = true)
-        try {
-            if (isNetworkAvailable(app)) {
-                    val result = getMovies.getMovies(searchQuery, page)
-                result.cachedIn(viewModelScope)
-                *//*Log.d("movies", "getMovies: ${result.data}")
-                when (result) {
-                    is Resource.Error -> _movieState.value =
-                        MovieListState(error = result.message ?: "Unexpected Error occurred")
-                    is Resource.Loading -> _movieState.value = MovieListState(isLoading = true)
-                    is Resource.Success -> {
-                        _movieState.value = MovieListState(movies = result.data)
-                        topMovies = _movieState.value.movies?.movies
-                            *//*
-            *//*if (page == 5)
-                                _movieState.value = MovieListState(
-                                    movies = Movie(
-                                        "True",
-                                        topMovies,
-                                        topMovies.size.toString()
-                                    )
-                                )
-                            else {
-                                result.data?.movies?.forEach {
-                                    if (it != null) {
-                                        topMovies.add(it)
-                                    }
-                                }
-                            }*//**//*
-                        }
-                    }*//*
-//                movies.postValue(result)
-            } else {
-//                movies.postValue(Resource.Error("Internet is not available"))
-                _movieState.value = MovieListState(error = "Internet is not available")
-            }
-        } catch (e: Exception) {
-//            movies.postValue(Resource.Error(e.message ?: "An unknown error occurred"))
-            _movieState.value = MovieListState(error = e.message ?: "An unknown error occurred")
-        }
-    }*/
+    private var query = mutableStateOf("")
+    private var _type = mutableStateOf("")
 
     fun getPagingMovies(): Flow<PagingData<Search>> {
-        val pager = getMovies.getMovies(query.value, 1)
+        val pager = getMovies.getMovies(query.value, _type.value, 1)
         pager.cachedIn(viewModelScope)
         return pager
     }
@@ -113,9 +57,7 @@ class MoviesViewmodel @Inject constructor(
         _movieDetailState.value = MovieDetailState(isLoading = true)
         try {
             if (isNetworkAvailable(app)) {
-                val result = getMovieDetail.getMovieDetails(imdbId)
-                Log.d("movies", "getMovieDetails: ${result.data}")
-                when (result) {
+                when (val result = getMovieDetail.getMovieDetails(imdbId)) {
                     is Resource.Error -> _movieDetailState.value = MovieDetailState(error = result.message ?: "Unexpected Error occurred")
                     is Resource.Loading -> _movieDetailState.value = MovieDetailState(isLoading = true)
                     is Resource.Success -> {
@@ -123,10 +65,10 @@ class MoviesViewmodel @Inject constructor(
                     }
                 }
             } else {
-                _movieState.value = MovieListState(error = "Internet is not available")
+                _movieDetailState.value = MovieDetailState(error = "Internet is not available")
             }
         } catch (e: Exception) {
-            _movieState.value = MovieListState(error = e.message ?: "An unknown error occurred")
+            _movieDetailState.value = MovieDetailState(error = e.message ?: "An unknown error occurred")
         }
     }
 
@@ -146,50 +88,21 @@ class MoviesViewmodel @Inject constructor(
         return result
     }
 
-    /*fun performQuery(query: String, page: Int) {
-        getPagingMovies(query, page)
-    }*/
-
-    fun getSpecificType(type: String) {
+    fun setSpecificType(type: String) {
         when (type) {
             Type.HOME.value -> {
-                if (topMovies.isNullOrEmpty())
-                    _movieState.value = MovieListState(error = "Unknown error occurred, please try again")
-                else
-                    _movieState.value = MovieListState(movies = Movie("True", topMovies, topMovies?.size.toString()))
+                _type.value = ""
             }
 
             Type.MOVIE.value -> {
-                var movieList = topMovies
-                movieList = movieList?.filter {
-                    it?.type == Type.MOVIE.value
-                }
-                if (movieList.isNullOrEmpty())
-                    _movieState.value = MovieListState(error = "Match not found")
-                else
-                    _movieState.value = MovieListState(movies = Movie("True", movieList, movieList.size.toString()))
+                _type.value = Type.MOVIE.value
             }
 
             Type.SERIES.value -> {
-                var movieList = topMovies
-                movieList = movieList?.filter {
-                    it?.type == Type.SERIES.value
-                }
-                if (movieList.isNullOrEmpty())
-                    _movieState.value = MovieListState(error = "Match not found")
-                else
-                    _movieState.value = MovieListState(movies = Movie("True", movieList, movieList.size.toString()))
+                _type.value = Type.SERIES.value
             }
-
             Type.EPISODE.value -> {
-                var movieList = topMovies
-                movieList = movieList?.filter {
-                    it?.type == Type.EPISODE.value
-                }
-                if (movieList.isNullOrEmpty())
-                    _movieState.value = MovieListState(error = "Match not found")
-                else
-                    _movieState.value = MovieListState(movies = Movie("True", movieList, movieList.size.toString()))
+                _type.value = Type.EPISODE.value
             }
         }
     }

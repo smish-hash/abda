@@ -11,6 +11,7 @@ private const val OMDB_STARTING_PAGE_INDEX = 1
 
 class MoviePagingSource(
     private val query: String,
+    private val type: String,
     private val movieApiService: MovieApiService
 ): PagingSource<Int, Search>() {
 
@@ -30,6 +31,7 @@ class MoviePagingSource(
         return try {
             val response = movieApiService.getMovies(
                 searchQuery = query,
+                type = type,
                 page = pageIndex
             )
             // can return load state . error here

@@ -17,7 +17,7 @@ interface MovieApiService {
         page: Int,
         @Query("apikey")
         apiKey: String = BuildConfig.MOVIE_API_KEY
-    ): Response<Movie>
+    ): Movie
 
     @GET(".")
     suspend fun getMovieDetails(

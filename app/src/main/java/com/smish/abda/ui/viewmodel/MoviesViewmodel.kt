@@ -8,16 +8,21 @@ import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.smish.abda.data.model.movie.Movie
 import com.smish.abda.data.model.movie.Search
 import com.smish.abda.data.model.movie.Type
+import com.smish.abda.data.repository.datasource.MoviePagingSource
 import com.smish.abda.domain.usecase.*
 import com.smish.abda.ui.movieList.MovieDetailState
 import com.smish.abda.ui.movieList.MovieListState
 import com.smish.abda.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,25 +45,32 @@ class MoviesViewmodel @Inject constructor(
     private val _movieDetailState = mutableStateOf(MovieDetailState())
     val movieDetailState: State<MovieDetailState> = _movieDetailState
 
-    init {
-        getMovies("why", 1)
-    }
+    var query = mutableStateOf("")
+        private set
 
-    fun getMovies(searchQuery: String, page: Int) = viewModelScope.launch { Dispatchers.IO
+    private lateinit var pagingSource : MoviePagingSource
+
+    /*init {
+        getPagingMovies("")
+    }*/
+
+    /*fun getMovies(searchQuery: String, page: Int) = viewModelScope.launch { Dispatchers.IO
 //        movies.postValue(Resource.Loading())
         _movieState.value = MovieListState(isLoading = true)
         try {
             if (isNetworkAvailable(app)) {
                     val result = getMovies.getMovies(searchQuery, page)
-                    Log.d("movies", "getMovies: ${result.data}")
-                    when (result) {
-                        is Resource.Error -> _movieState.value =
-                            MovieListState(error = result.message ?: "Unexpected Error occurred")
-                        is Resource.Loading -> _movieState.value = MovieListState(isLoading = true)
-                        is Resource.Success -> {
-                            _movieState.value = MovieListState(movies = result.data)
-                            topMovies = _movieState.value.movies?.movies
-                            /*if (page == 5)
+                result.cachedIn(viewModelScope)
+                *//*Log.d("movies", "getMovies: ${result.data}")
+                when (result) {
+                    is Resource.Error -> _movieState.value =
+                        MovieListState(error = result.message ?: "Unexpected Error occurred")
+                    is Resource.Loading -> _movieState.value = MovieListState(isLoading = true)
+                    is Resource.Success -> {
+                        _movieState.value = MovieListState(movies = result.data)
+                        topMovies = _movieState.value.movies?.movies
+                            *//*
+            *//*if (page == 5)
                                 _movieState.value = MovieListState(
                                     movies = Movie(
                                         "True",
@@ -72,9 +84,9 @@ class MoviesViewmodel @Inject constructor(
                                         topMovies.add(it)
                                     }
                                 }
-                            }*/
+                            }*//**//*
                         }
-                    }
+                    }*//*
 //                movies.postValue(result)
             } else {
 //                movies.postValue(Resource.Error("Internet is not available"))
@@ -84,7 +96,18 @@ class MoviesViewmodel @Inject constructor(
 //            movies.postValue(Resource.Error(e.message ?: "An unknown error occurred"))
             _movieState.value = MovieListState(error = e.message ?: "An unknown error occurred")
         }
+    }*/
+
+    fun getPagingMovies(): Flow<PagingData<Search>> {
+        val pager = getMovies.getMovies(query.value, 1)
+        pager.cachedIn(viewModelScope)
+        return pager
     }
+
+    fun setQuery(query: String) {
+        this.query.value = query
+    }
+
 
     fun getMovieDetails(imdbId: String) = viewModelScope.launch { Dispatchers.IO
         _movieDetailState.value = MovieDetailState(isLoading = true)
@@ -123,9 +146,9 @@ class MoviesViewmodel @Inject constructor(
         return result
     }
 
-    fun performQuery(query: String, page: Int) {
-        getMovies(query, page)
-    }
+    /*fun performQuery(query: String, page: Int) {
+        getPagingMovies(query, page)
+    }*/
 
     fun getSpecificType(type: String) {
         when (type) {

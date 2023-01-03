@@ -3,10 +3,10 @@ package com.smish.abda.ui.movieList.components
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,6 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import com.smish.abda.R
 import com.smish.abda.data.model.movie.Type
 import com.smish.abda.data.model.movie.getAllTypes
@@ -78,6 +80,7 @@ fun MovieListScreen(
         }
     )
 
+    val movieList = viewmodel.getPagingMovies().collectAsLazyPagingItems()
     ModalBottomSheetLayout(
         sheetState = bottomSheetModalState,
         sheetContent = {
@@ -141,11 +144,25 @@ fun MovieListScreen(
                     }
                 )
 
-                LazyVerticalGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    columns = GridCells.Adaptive(minSize = 135.dp)
+
+                MovieList(
+                    movies = movieList,
+                    onMovieClick = {
+                        showModalSheet.value = !showModalSheet.value
+                        viewmodel.getMovieDetails(it.imdbID)
+                    },
+                    onBookmarkClick = { isChecked, movie ->
+                        if (!isChecked)
+                            viewmodel.bookmarkMovie(movie)
+                        else
+                            viewmodel.removeMovie(movie)
+                    }
+                )
+
+                /*LazyColumn(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(state.movies?.movies ?: emptyList()) { movie ->
+                    items(movieList) { movie ->
                         if (movie != null) {
                             val (isChecked, setChecked) = remember { mutableStateOf(false) }
                             MovieListItem(
@@ -166,7 +183,34 @@ fun MovieListScreen(
                             )
                         }
                     }
-                }
+                }*/
+
+                /*LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = GridCells.Adaptive(minSize = 135.dp)
+                ) {
+                    items(movieList) { movie ->
+                        if (movie != null) {
+                            val (isChecked, setChecked) = remember { mutableStateOf(false) }
+                            MovieListItem(
+                                movie = movie,
+                                onMovieClick = {
+                                    // call the movie detail api and trigger the bottom sheet
+                                    showModalSheet.value = !showModalSheet.value
+                                    viewmodel.getMovieDetails(movie.imdbID)
+                                },
+                                isChecked,
+                                onBookmarkClick = {
+                                    setChecked(!isChecked)
+                                    if (!isChecked)
+                                        viewmodel.bookmarkMovie(movie)
+                                    else
+                                        viewmodel.removeMovie(movie)
+                                }
+                            )
+                        }
+                    }
+                }*/
             }
 
             if (state.error.isNotBlank()) {
@@ -197,8 +241,10 @@ fun SearchView(state: MutableState<TextFieldValue>, viewmodel: MoviesViewmodel) 
         value = state.value,
         onValueChange = { value ->
             state.value = value
-            if (state.value.text.length > 3)
-                viewmodel.performQuery(state.value.text, 1)
+            if (state.value.text.length > 3) {
+//                viewmodel.performQuery(state.value.text, 1)
+                viewmodel.setQuery(state.value.text)
+            }
         },
         leadingIcon = {
             Icon(
@@ -215,7 +261,8 @@ fun SearchView(state: MutableState<TextFieldValue>, viewmodel: MoviesViewmodel) 
                     onClick = {
                         state.value =
                             TextFieldValue("") // Remove text from TextField when you press the 'X' icon
-                        viewmodel.performQuery("why", 1)
+//                        viewmodel.performQuery("why", 1)
+                        viewmodel.setQuery("why")
                     }
                 ) {
                     Icon(

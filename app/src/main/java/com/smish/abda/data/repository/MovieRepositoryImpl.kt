@@ -1,6 +1,6 @@
 package com.smish.abda.data.repository
 
-import com.smish.abda.data.model.movie.Movie
+import androidx.paging.PagingData
 import com.smish.abda.data.model.movie.Search
 import com.smish.abda.data.model.moviedetail.MovieDetail
 import com.smish.abda.data.repository.datasource.MovieLocalDataSource
@@ -14,9 +14,9 @@ class MovieRepositoryImpl(
     private val movieLocalDataSource: MovieLocalDataSource
 ): MovieRepository {
 
-    override suspend fun getMovies(searchQuery: String, page: Int): Resource<Movie> {
-        val response = movieRemoteDataSource.getMovies(searchQuery, page)
-        if (response.isSuccessful) {
+    override fun getMovies(searchQuery: String, page: Int): Flow<PagingData<Search>> {
+        return movieRemoteDataSource.getMovies(searchQuery, page)
+        /*if (response.isSuccessful) {
             response.body()?.let { res ->
                 if (res.response == "True") {
                     return Resource.Success(res)
@@ -25,7 +25,7 @@ class MovieRepositoryImpl(
                 }
             }
         }
-        return Resource.Error(response.message() ?: "Unknown error occurred")
+        return Resource.Error(response.message() ?: "Unknown error occurred")*/
     }
 
     override suspend fun getMovieDetails(imdbId: String): Resource<MovieDetail> {

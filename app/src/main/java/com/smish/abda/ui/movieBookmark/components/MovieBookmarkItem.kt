@@ -4,13 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -37,7 +33,7 @@ fun MovieBookmarkItem(
                 .padding(12.dp)
                 .wrapContentSize()
         ) {
-            Box() {
+            Box {
                 Card(
                     shape = RoundedCornerShape(12.dp),
                     backgroundColor = MaterialTheme.colors.background,
@@ -78,7 +74,7 @@ fun PreviewMovieListItem() {
     val (isChecked, setChecked) = remember { mutableStateOf(false) }
     AbdaTheme {
         MovieBookmarkItem(
-            Search("123", "fdowbi", "Smishra", "movie", "2021"),
+            Search("123", "fdowbi", "Smishra", "movie", "2021", false),
             onMovieClick = {}
         )
     }

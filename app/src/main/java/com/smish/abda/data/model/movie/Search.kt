@@ -23,8 +23,15 @@ data class Search(
     val type: String,
 
     @SerializedName("Year")
-    val year: String
-)
+    val year: String,
+
+    @ColumnInfo(name = "isBookmarked")
+    var isBookmarked: Boolean
+) {
+    fun toggle() {
+        isBookmarked = !isBookmarked
+    }
+}
 
 // since all are type string here, we do not create any type converter for room db else we would have needed one.
 /*

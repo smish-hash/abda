@@ -133,40 +133,13 @@ fun MovieListScreen(
                         showModalSheet.value = !showModalSheet.value
                         viewmodel.getMovieDetails(it.imdbID)
                     },
-                    onBookmarkClick = { isChecked, movie ->
-                        if (!isChecked)
+                    onBookmarkClick = { movie ->
+                        if (!movie.isBookmarked)
                             viewmodel.bookmarkMovie(movie)
                         else
                             viewmodel.removeMovie(movie)
                     }
                 )
-
-                /*LazyVerticalGrid(
-                    modifier = Modifier.fillMaxSize(),
-                    columns = GridCells.Adaptive(minSize = 135.dp)
-                ) {
-                    items(movieList) { movie ->
-                        if (movie != null) {
-                            val (isChecked, setChecked) = remember { mutableStateOf(false) }
-                            MovieListItem(
-                                movie = movie,
-                                onMovieClick = {
-                                    // call the movie detail api and trigger the bottom sheet
-                                    showModalSheet.value = !showModalSheet.value
-                                    viewmodel.getMovieDetails(movie.imdbID)
-                                },
-                                isChecked,
-                                onBookmarkClick = {
-                                    setChecked(!isChecked)
-                                    if (!isChecked)
-                                        viewmodel.bookmarkMovie(movie)
-                                    else
-                                        viewmodel.removeMovie(movie)
-                                }
-                            )
-                        }
-                    }
-                }*/
             }
 
             /*if (state.error.isNotBlank()) {

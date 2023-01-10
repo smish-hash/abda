@@ -8,4 +8,8 @@ class GetBookmarkedMovies(private val movieRepository: MovieRepository) {
     fun getBookmarkedMovies(): Flow<List<Search>> {
         return movieRepository.getBookmarkedMovies()
     }
+
+    fun getSavedMoviesIds(): Flow<List<String>> {
+        return movieRepository.getSavedMoviesIds()
+    }
 }

@@ -1,6 +1,7 @@
 package com.smish.abda.data.model.movie
 
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -8,17 +9,29 @@ import com.google.gson.annotations.SerializedName
 @Entity(tableName = "movies")
 data class Search(
     @PrimaryKey
+    @ColumnInfo(name = "imdbID")
     @SerializedName("imdbID")
     val imdbID: String,
+
     @SerializedName("Poster")
     val poster: String,
+
     @SerializedName("Title")
     val title: String,
+
     @SerializedName("Type")
     val type: String,
+
     @SerializedName("Year")
-    val year: String
-)
+    val year: String,
+
+    @ColumnInfo(name = "isBookmarked")
+    var isBookmarked: Boolean
+) {
+    fun toggle() {
+        isBookmarked = !isBookmarked
+    }
+}
 
 // since all are type string here, we do not create any type converter for room db else we would have needed one.
 /*

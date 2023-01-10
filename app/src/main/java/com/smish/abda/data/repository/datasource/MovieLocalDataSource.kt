@@ -7,5 +7,6 @@ interface MovieLocalDataSource {
     /*defining functions to interact with the db*/
     suspend fun saveMovieToDB(movie: Search)
     fun getSavedMoviesFromDB(): Flow<List<Search>>
+    fun getSavedMoviesIdsFromDB(): Flow<List<String>>
     suspend fun deleteMovieFromDB(imdbID: String)
 }

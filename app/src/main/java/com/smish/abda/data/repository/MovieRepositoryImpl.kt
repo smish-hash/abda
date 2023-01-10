@@ -53,4 +53,8 @@ class MovieRepositoryImpl(
     override fun getBookmarkedMovies(): Flow<List<Search>> {
         return movieLocalDataSource.getSavedMoviesFromDB()
     }
+
+    override fun getSavedMoviesIds(): Flow<List<String>> {
+        return movieLocalDataSource.getSavedMoviesIdsFromDB()
+    }
 }

@@ -16,6 +16,10 @@ class MovieLocalDataSourceImpl(
         return movieDao.getAllSavedMovies()
     }
 
+    override fun getSavedMoviesIdsFromDB(): Flow<List<String>> {
+        return movieDao.getSavedMoviesIds()
+    }
+
     override suspend fun deleteMovieFromDB(imdbID: String) {
         return movieDao.delete(imdbID)
     }

@@ -121,4 +121,10 @@ class MoviesViewmodel @Inject constructor(
             emit(it)
         }
     }
+
+    fun getSavedMoviesIds() = liveData {
+        getBookmarkedMovies.getSavedMoviesIds().collect{
+            emit(it)
+        }
+    }
 }

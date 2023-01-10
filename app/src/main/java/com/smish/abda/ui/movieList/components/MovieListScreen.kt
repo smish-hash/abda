@@ -1,5 +1,6 @@
 package com.smish.abda.ui.movieList.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +58,9 @@ fun MovieListScreen(
     val showModalSheet = rememberSaveable {
         mutableStateOf(false)
     }
+
+    val savedList by viewmodel.getSavedMoviesIds().observeAsState()
+    Log.d("saved", "MovieListScreen: $savedList")
 
     val movieList = viewmodel.getPagingMovies().collectAsLazyPagingItems()
     ModalBottomSheetLayout(
@@ -123,6 +128,7 @@ fun MovieListScreen(
 
                 MovieList(
                     movies = movieList,
+                    savedList = savedList ?: emptyList(),
                     onMovieClick = {
                         showModalSheet.value = !showModalSheet.value
                         viewmodel.getMovieDetails(it.imdbID)

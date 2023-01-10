@@ -17,4 +17,6 @@ interface MovieRepository {
     // to get data from db as a flow.
     // asynchronous data stream in the viewmodel, collect it and emit it as live data.
     fun getBookmarkedMovies(): Flow<List<Search>>
+
+    fun getSavedMoviesIds(): Flow<List<String>>
 }

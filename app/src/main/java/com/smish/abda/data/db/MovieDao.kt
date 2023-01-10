@@ -22,4 +22,7 @@ interface MovieDao {
 
     @Query("DELETE FROM movies")
     suspend fun deleteAll()
+
+    @Query("SELECT imdbID FROM movies")
+    fun getSavedMoviesIds(): Flow<List<String>>
 }

@@ -53,6 +53,14 @@ fun MovieListItem(
                         // Crop, Fit, Inside, FillHeight, FillWidth, None
                         contentScale = ContentScale.Crop
                     )
+                    // for preview
+                    /*Box(
+                        modifier = Modifier
+                            .height(150.dp)
+                            .width(135.dp)
+                            .background(color = Color.Cyan)
+                    ) {
+                    }*/
                 }
 
                 IconToggleButton(
@@ -88,16 +96,20 @@ fun MovieListItem(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = false)
 @Composable
 fun PreviewMovieListItem() {
-    val (isChecked, setChecked) = remember { mutableStateOf(false) }
     AbdaTheme {
+        val (isChecked, setChecked) = remember { mutableStateOf(false) }
         MovieListItem(
-            Search("123", "fdowbi", "Smishra", "movie", "2021"),
+            Search("123",
+                "https://www.google.com/imgres?imgurl=https%3A%2F%2Fmiro.medium.com%2Fmax%2F1024%2F1*zEs8abcQCFrwGeXrVcQ3cg.png&imgrefurl=https%3A%2F%2Fproandroiddev.com%2Fpaging-3-easier-way-to-pagination-part-1-584cad1f4f61&tbnid=Kaq9xtR0nHndYM&vet=12ahUKEwiYibfDv7z8AhW6i9gFHZofA9YQMygAegUIARC7AQ..i&docid=8Dlf-i8q9nZ3nM&w=1024&h=512&q=where%20to%20add%20paging%203%20in%20android&ved=2ahUKEwiYibfDv7z8AhW6i9gFHZofA9YQMygAegUIARC7AQ",
+                "Smishra",
+                "movie",
+                "2021"),
             onMovieClick = {},
             isChecked,
-            onBookmarkClick = { setChecked(!isChecked) }
+            onBookmarkClick = {setChecked(!isChecked)}
         )
     }
 }

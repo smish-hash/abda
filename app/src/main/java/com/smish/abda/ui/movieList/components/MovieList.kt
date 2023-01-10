@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +20,7 @@ import com.smish.abda.data.model.movie.Search
 @Composable
 fun MovieList(
     movies: LazyPagingItems<Search>,
-    modifier: Modifier = Modifier,
+    savedList: List<String>,
     onMovieClick: (Search) -> Unit,
     onBookmarkClick: (isChecked: Boolean, movie: Search) -> Unit
 ) {
@@ -57,11 +58,13 @@ fun MovieList(
                 }
             }*/
             LazyColumn(
+                state = rememberLazyListState(),
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(movies) { movie ->
                     if (movie != null) {
                         val (isChecked, setChecked) = remember { mutableStateOf(false) }
+                        if (savedList.contains(movie.imdbID)) setChecked(true) else setChecked(false)
                         MovieListItem(
                             movie = movie,
                             onMovieClick = {

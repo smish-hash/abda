@@ -10,4 +10,6 @@
     <color name="Card_Light_Gray">#FF424242</color>
     <color name="Card_Dark_Gray">#1C1C1C</color>
     <color name="BackgroundYellow">#FFF1BA</color>
+    <color name="secondaryOrange">#FF5100</color>
+    <color name="primaryOrange">#DB6312</color>
 </resources>

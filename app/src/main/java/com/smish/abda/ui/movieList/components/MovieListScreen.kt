@@ -273,7 +273,7 @@ fun Chip(
         modifier = Modifier.padding(4.dp),
         elevation = if (isSelected) 24.dp else 0.dp,
         shape = RoundedCornerShape(18.dp),
-        color = if (isSelected) Color.Red else MaterialTheme.colors.onBackground
+        color = if (isSelected) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.onBackground
     ) {
         Row(modifier = Modifier
             .toggleable(

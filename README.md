@@ -1,11 +1,12 @@
 # abda
-abds is a sample movie listing app, built using
+abda is a sample movie listing app, built using
 [Jetpack Compose](https://developer.android.com/jetpack/compose). The aim of this app is to
 showcase the power and capabilities of Compose.
 
 ## Screenshots
 
-<img src="screenshots/abda_ss.jpg" alt="Screenshot">
+<img src="screenshots/adba_ss.jpg" alt="Screenshot">
+
 
 ## Tools
 

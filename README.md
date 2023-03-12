@@ -5,7 +5,7 @@ showcase the power and capabilities of Compose.
 
 ## Screenshots
 
-<img src="screenshots/abda_ss.png" alt="Screenshot">
+<img src="screenshots/abda_ss.jpg" alt="Screenshot">
 
 ## Tools
 
